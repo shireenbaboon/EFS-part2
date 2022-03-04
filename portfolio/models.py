@@ -76,7 +76,7 @@ class Stock(models.Model):
     def current_stock_price(self):
         symbol_f = str(self.symbol)
         main_api = 'http://api.marketstack.com/v1/eod?'
-        api_key = 'access_key=44eec3e75b90808544ff01e1acdfceb4&limit=1&symbols='
+        api_key = 'access_key=9ba026285cd11a4086269a09fd330bc2&limit=1&symbols='
         url = main_api + api_key + symbol_f
         json_data = requests.get(url).json()
         open_price = float(json_data["data"][0]["open"])
@@ -91,6 +91,9 @@ class Stock(models.Model):
 
     def total_of_current_stock_value(self):
         return round((Decimal(self.current_stock_price()) * Decimal(self.shares)), 3)
+
+
+
 
 
 

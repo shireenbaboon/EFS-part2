@@ -19,7 +19,7 @@ from django.conf import settings
 from email.message import EmailMessage
 from io import BytesIO
 from django.http import HttpResponse
-
+import requests
 now = timezone.now()
 
 
@@ -38,6 +38,7 @@ def customer_list(request):
     return render(request, 'portfolio/customer_list.html',
                   {'customers': customer})
 
+
 @login_required
 def customer_new(request):
     if request.method == "POST":
@@ -51,7 +52,6 @@ def customer_new(request):
         form = CustomerForm()
         # print("Else")
     return render(request, 'portfolio/customer_new.html', {'form': form})
-
 
 
 @login_required
@@ -195,15 +195,22 @@ def portfolio(request, pk):
     #   sum_recent_value = 0
     #   sum_acquired_value = 0
     #   resultsstock = sum_current_stocks_value-sum_of_initial_stock_value
+  #  rates = rate_display('http://api.exchangeratesapi.io/v1/latest?access_key=86cc83b733b6b45481ea732c11117bf0')
+    rates = requests.get(
+        'http://api.exchangeratesapi.io/v1/latest?access_key=86cc83b733b6b45481ea732c11117bf0&base=EUR').json()
+    inputvalue = 'USD'
+    print("Output from View", rates['rates'].get(inputvalue))
+    result = rates['rates'].get(inputvalue)
 
     for investment in investments:
         sum_initial_investment += investment.acquired_value
         sum_current_investment += investment.recent_value
-        # resultsinvestment = sum_current_investment - sum_initial_investment
-    # Loop through each stock and add the value to the total
+        investmentresult=float(sum_current_investment)-float(sum_initial_investment)
+
     for stock in stocks:
         sum_current_stocks_value += stock.current_stock_value()
         sum_of_initial_stock_value += stock.initial_stock_value()
+        stockresult = float(sum_current_stocks_value)-float( sum_of_initial_stock_value)
 
         portfolio_initial_investment = float(sum_initial_investment) + float(sum_of_initial_stock_value)
         portfolio_current_investment = float(sum_current_investment) + float(sum_current_stocks_value)
@@ -223,8 +230,13 @@ def portfolio(request, pk):
                                                         'portfolio_initial_investment': portfolio_initial_investment,
                                                         'portfolio_current_investment': portfolio_current_investment,
                                                         'grand_total_results': grand_total_results,
+                                                        'rates': rates,
+                                                        'result':result,
+                                                        'stockresult':stockresult,
+                                                        'investmentresult':investmentresult,
 
                                                         })
+
 
 
 
@@ -236,3 +248,5 @@ class CustomerList(APIView):
         customers_json = Customer.objects.all()
         serializer = CustomerSerializer(customers_json, many=True)
         return Response(serializer.data)
+
+

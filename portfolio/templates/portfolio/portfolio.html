@@ -37,6 +37,7 @@
             <th>Portfolio Initial Investments </th>
             <th>Portfolio Current Investments</th>
             <th>Grand Total Results</th>
+             <th>Converted Value From EUR to USD</th>
         </tr>
         </thead>
         <tbody>
@@ -45,6 +46,7 @@
                 <td>{{ sum_of_initial_stock_value|add:sum_initial_investment|intcomma }}</td>
                 <td>{{ sum_current_stocks_value|add:sum_current_investment|intcomma}}</td>
                 <td>{{grand_total_results|intcomma}}</td>
+                <td>{{grand_total_results|mul:result|intcomma}}</td>
             </tr>
 
         </tbody>
@@ -99,6 +101,7 @@
             <th>Total of Initial Stocks</th>
             <th>Total of current Stocks</th>
             <th>Results</th>
+            <th>Converted value from Euro To USD</th>
         </tr>
         </thead>
         <tbody>
@@ -107,6 +110,8 @@
                 <td>{{ sum_of_initial_stock_value|intcomma }}</td>
                 <td>{{ sum_current_stocks_value|intcomma }}</td>
                 <td>{{ sum_current_stocks_value|sub:sum_of_initial_stock_value|intcomma }}</td>
+                <td>{{stockresult|mul:result|intcomma}}</td>
+
             </tr>
 
         </tbody>
@@ -154,6 +159,7 @@
             <th>Total of Initial Investments</th>
             <th>Total of current Investments</th>
             <th>Results</th>
+            <th>Converted value from Euro To USD</th>
         </tr>
         </thead>
         <tbody>
@@ -162,6 +168,9 @@
                 <td>{{ sum_initial_investment|intcomma }}</td>
                 <td>{{ sum_current_investment|intcomma }}</td>
                 <td>{{ sum_current_investment|sub:sum_initial_investment|intcomma }}</td>
+                <td>{{ investmentresult|mul:result|intcomma}}</td>
+
+
             </tr>
 
         </tbody>

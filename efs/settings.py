@@ -152,6 +152,7 @@ EMAIL_HOST_PASSWORD = 'qjmmmthbtvwvnone'
 
 
 AUTH_USER_MODEL = 'users.CustomUser'
+
 django_heroku.settings(locals())
 
 

@@ -21,6 +21,24 @@ from io import BytesIO
 from django.http import HttpResponse
 import requests
 now = timezone.now()
+from django.http import HttpResponse
+from django.views.generic import View
+import weasyprint
+from django.template.loader import render_to_string
+from django.core.mail import EmailMessage, send_mail, send_mass_mail
+from django.shortcuts import render, get_object_or_404, redirect
+
+# importing get_template from loader
+from django.template.loader import get_template
+
+# import render_to_pdf from util.py
+#from .utils import render_to_pdf
+from django.shortcuts import render
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from io import BytesIO
+from xhtml2pdf import pisa
+
 
 
 def home(request):
@@ -250,3 +268,88 @@ class CustomerList(APIView):
         return Response(serializer.data)
 
 
+def portfolio_pdf(request,pk):
+    customer = get_object_or_404(Customer, pk=pk)
+    customers = Customer.objects.filter(created_date__lte=timezone.now())
+    investments = Investment.objects.filter(customer=pk)
+    stocks = Stock.objects.filter(customer=pk)
+    sum_recent_value = Investment.objects.filter(customer=pk).aggregate(sum=Sum('recent_value'))['sum']
+    sum_acquired_value = Investment.objects.filter(customer=pk).aggregate(sum=Sum('acquired_value'))['sum']
+    # Initialize the value of the stocks
+    sum_current_stocks_value = 0
+    sum_of_initial_stock_value = 0
+    sum_initial_investment = 0
+    sum_current_investment = 0
+    rates = requests.get(
+       'http://api.exchangeratesapi.io/v1/latest?access_key=86cc83b733b6b45481ea732c11117bf0&base=EUR').json()
+    inputvalue = 'USD'
+   # print("Output from View", rates['rates'].get(inputvalue))
+    result = rates['rates'].get(inputvalue)
+
+    for investment in investments:
+        sum_initial_investment += investment.acquired_value
+        sum_current_investment += investment.recent_value
+        investmentresult = float(sum_current_investment) - float(sum_initial_investment)
+
+    for stock in stocks:
+        sum_current_stocks_value += stock.current_stock_value()
+        sum_of_initial_stock_value += stock.initial_stock_value()
+        stockresult = float(sum_current_stocks_value) - float(sum_of_initial_stock_value)
+
+        portfolio_initial_investment = float(sum_initial_investment) + float(sum_of_initial_stock_value)
+        portfolio_current_investment = float(sum_current_investment) + float(sum_current_stocks_value)
+        grand_total_results = float(portfolio_current_investment) - float(portfolio_initial_investment)
+
+
+    subject = f' Patient PDF is generated'
+    message = 'Please find the attached file for patient details(MSD Assignment3).'
+
+    email = EmailMessage(subject,
+                         message,
+                         'shireenbaboon@gmail.com',
+                         ['shireen54@gmail.com','groyce@unomaha.edu']
+                         )
+    html = render_to_string('portfolio_pdf.html',
+                            {'customers': customers,
+                             'investments': investments,
+                             'stocks': stocks,
+                             'sum_acquired_value': sum_acquired_value,
+                             'sum_recent_value': sum_recent_value,
+                             'sum_current_stocks_value': sum_current_stocks_value,
+                             'sum_of_initial_stock_value': sum_of_initial_stock_value,
+                             'sum_initial_investment': sum_initial_investment,
+                             'sum_current_investment': sum_current_investment,
+                             # 'resultsstock': resultsstock,
+                             # 'resultsinvestment': resultsinvestment,
+                             'portfolio_initial_investment': portfolio_initial_investment,
+                             'portfolio_current_investment': portfolio_current_investment,
+                             'grand_total_results': grand_total_results,
+                            'rates': rates,
+                             'result': result,
+                             'stockresult': stockresult,
+                             'investmentresult': investmentresult,
+                             })
+    out = BytesIO()
+    stylesheets = [weasyprint.CSS(settings.STATIC_ROOT + '/pdf.css')]
+    weasyprint.HTML(string=html).write_pdf(out, stylesheets=stylesheets)
+    email.attach(f'Portfolio_{customers}.pdf', out.getvalue(), 'application/pdf')
+    email.send()
+    return render(request, 'email_sent.html',{'customers': customers,
+                   'investments': investments,
+                   'stocks': stocks,
+                   'sum_acquired_value': sum_acquired_value,
+                   'sum_recent_value': sum_recent_value,
+                   'sum_current_stocks_value': sum_current_stocks_value,
+                   'sum_of_initial_stock_value': sum_of_initial_stock_value,
+                   'sum_initial_investment': sum_initial_investment,
+                   'sum_current_investment': sum_current_investment,
+                   # 'resultsstock': resultsstock,
+                   # 'resultsinvestment': resultsinvestment,
+                   'portfolio_initial_investment': portfolio_initial_investment,
+                   'portfolio_current_investment': portfolio_current_investment,
+                   'grand_total_results': grand_total_results,
+                   'rates': rates,
+                   'result': result,
+                   'stockresult': stockresult,
+                   'investmentresult': investmentresult,
+                   })

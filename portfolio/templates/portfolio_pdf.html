@@ -1,4 +1,3 @@
-{% extends 'portfolio/base.html' %}
 {% load humanize %}
 {% load mathfilters %}
 {% block content %}
@@ -13,7 +12,7 @@
 
             <body>
                      <div class="container">
-                                <div class="row">
+                                <div class="responsive">
                                     <div class="col-md-10 col-md-offset-1">
                                         <div class="panel panel-primary">
                                             <div class="panel-heading">Welcome!</div>
@@ -28,37 +27,36 @@
 <div class="row">
     <h1 style="padding-left: 15Px">Customer Portfolio</h1>
 </div>
-<div class="row">
+<div class="row-responsive">
     <h2 style="padding-left: 15Px">Overall Portfolio Performance</h2>
-
-{% for customer in customers %}
-
-<div class="row">
+<div class="table-responsive">
     <table class="table table-striped table-bordered table-hover">
         <thead>
-        <tr class="bg-info">
+        <tr class="bg-info-responsive">
             <th>Portfolio Initial Investments </th>
             <th>Portfolio Current Investments</th>
             <th>Grand Total Results</th>
+             <th>Converted Value From EUR to USD</th>
         </tr>
         </thead>
         <tbody>
 
             <tr>
-                <td>{{stock.sum_of_initial_stock_value|add:investment.sum_initial_investment|intcomma }}</td>
-                <td>{{ stock.sum_current_stocks_value|add:investment.sum_current_investment|intcomma}}</td>
+                <td>{{ sum_of_initial_stock_value|add:sum_initial_investment|intcomma }}</td>
+                <td>{{ sum_current_stocks_value|add:sum_current_investment|intcomma}}</td>
                 <td>{{grand_total_results|intcomma}}</td>
+                <td>{{grand_total_results|mul:result|intcomma}}</td>
             </tr>
 
         </tbody>
     </table>
 </div>
 </div>
-
+<div>
 <div class="row">
     <h2 style="padding-left: 15Px">Stocks Information</h2>
 </div>
-<div class="row">
+<div class="table-responsive">
     <table class="table table-striped table-bordered table-hover">
         <thead>
         <tr class="bg-info">
@@ -93,22 +91,26 @@
         {% endfor %}
         </tbody>
     </table>
+</div>
 
- <div class="row">
+ <div class="table-responsive">
     <table class="table table-striped table-bordered table-hover">
         <thead>
         <tr class="bg-info">
             <th>Total of Initial Stocks</th>
             <th>Total of current Stocks</th>
             <th>Results</th>
+            <th>Converted value from Euro To USD</th>
         </tr>
         </thead>
         <tbody>
 
             <tr>
-                <td>{{stock.sum_of_initial_stock_value }}</td>
-                <td>{{stock.sum_current_stocks_value|intcomma }}</td>
-                <td>{{sum_current_stocks_value|sub:sum_of_initial_stock_value|intcomma }}</td>
+                <td>{{ sum_of_initial_stock_value|intcomma }}</td>
+                <td>{{ sum_current_stocks_value|intcomma }}</td>
+                <td>{{ sum_current_stocks_value|sub:sum_of_initial_stock_value|intcomma }}</td>
+                <td>{{stockresult|mul:result|intcomma}}</td>
+
             </tr>
 
         </tbody>
@@ -116,10 +118,10 @@
 </div>
 </div>
             <div class="row">
-    <h2 style="padding-left: 15Px">Investment Information</h2>
-</div>
-<div class="row">
-    <table class="table table-striped table-bordered table-hover">
+        <h2 style="padding-left: 15Px">Investment Information</h2>
+            </div>
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered table-hover">
         <thead>
         <tr class="bg-info">
             <th>Customer</th>
@@ -149,26 +151,35 @@
         </tbody>
     </table>
     </div>
-<div class="row">
+<div class="table-responsive">
     <table class="table table-striped table-bordered table-hover">
         <thead>
         <tr class="bg-info">
             <th>Total of Initial Investments</th>
             <th>Total of current Investments</th>
             <th>Results</th>
+            <th>Converted value from Euro To USD</th>
         </tr>
         </thead>
         <tbody>
 
             <tr>
-                <td>{{investment.sum_initial_investment|intcomma }}</td>
-                <td>{{ investment.sum_current_investment|intcomma }}</td>
-                <td>{{investment.sum_current_investment|sub:sum_initial_investment|intcomma }}</td>
+                <td>{{ sum_initial_investment|intcomma }}</td>
+                <td>{{ sum_current_investment|intcomma }}</td>
+                <td>{{ sum_current_investment|sub:sum_initial_investment|intcomma }}</td>
+                <td>{{ investmentresult|mul:result|intcomma}}</td>
+
+
             </tr>
 
         </tbody>
     </table>
-    {% endfor %}
 </div>
+     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+
 {% endblock %}
 

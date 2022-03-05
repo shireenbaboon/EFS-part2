@@ -8,5 +8,7 @@ requests==2.25.1
 psycopg2==2.8.6
 django-heroku
 weasyprint
+reportlab==3.6.6
+xhtml2pdf
 
 

@@ -22,7 +22,7 @@ urlpatterns = [
     path('stock/<int:pk>/delete/', views.stock_delete, name='stock_delete'),
     path('customer/<int:pk>/portfolio/', views.portfolio, name='portfolio'),
     url(r'^customers_json/', views.CustomerList.as_view()),
-    #path('signup/',SignUpView.as_view(), name='signup'),
+    path('portfolio_pdf/<int:pk>/pdf/', views.portfolio_pdf, name='portfolio_pdf'),
 
 
 ]

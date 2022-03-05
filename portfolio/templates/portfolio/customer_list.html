@@ -65,9 +65,14 @@
                     <td><a href="{% url 'portfolio:customer_delete' pk=customer.pk %}"
                            onclick="return confirm('Are you sure you want to delete?')"
                            class="btn btn-danger">Delete</a>
+
                     </td>
                     <td><a href="{% url 'portfolio:portfolio' pk=customer.pk %}"
                            class="btn btn-primary">Portfolio</a>
+                    </td>
+                    <td><a href="{% url 'portfolio:portfolio_pdf' pk=customer.pk %}"
+                           class="btn btn-primary">SEND PDF</a>
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>
